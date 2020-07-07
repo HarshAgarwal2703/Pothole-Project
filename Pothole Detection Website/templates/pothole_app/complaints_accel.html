@@ -1,0 +1,89 @@
+{% extends "pothole_app/base.html"%}
+
+{% block content%}
+    <!-- <div style="padding: 20px;background:#ffffff; border-radius: 100px; margin: 20px;">
+        <div class="division_for_Profile_Image" style="text-align: left; width: inherit; display: table-row">
+            {% if user.is_authenticated %}
+                <div style="display: table-cell;">
+                    <img class="rounded-circle article-img" style="height: 150px; width:150px" src="{{ user.profile.image.url }}">
+                </div>
+                <div style="display: table-cell; float: left;">
+                    <h2 style="display: inline-block;">{{ request.app_user.first_name }} {{request.app_user.last_name}}</h2>
+                </div>
+            {% endif %}
+    </div>
+    </div> -->
+    {%  for accel_post in accel_posts %}
+        <form method="POST" style="display: inline flow-root list-item; width: 55%;float: left;padding-right: 15px;">
+            {% csrf_token %}
+            <article class="media content-section">
+                <div class="media-body">
+                    <div class="article-metadata">
+                    <a class="mr-2" href="#" type="submit">Accelerometer Data Complain</a>
+                    </div>
+
+                    <p>Title: {{ accel_post.title }}  <br>Created date: {{ accel_post.created_date }}&nbsp; &nbsp;&nbsp; Published Date {{ accel_post.published_date }}</p>
+                    <p>X-Acceleration: {{ accel_post.x_coordinate }} <br> Y-Acceleration: {{ accel_post.y_coordinate }} <br> Z-Acceleration: {{accel_post.z_coordinate}}</p>
+                    <p class="article-content"> Latitute: {{ accel_post.latitude }}  &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;Longitude: {{ accel_post.longitude }}<br> Vote Count: {{ accel_post.vote_count }} <br> Description: {{ accel_post.Description }} <br>Adress: {{ accel_post.address }}</p>
+                    <!-- <img src="{{ image_post.image.url }}" style="width: 300px;height:200px;"> -->
+                    <br>
+                    <select>
+                        <option value="Waiting for Acknowledgement">Waiting for Acknowledgement</option>
+                        <option value="Acknowledged">Acknowledged</option>
+                        <option value="Work in Progress">Work in Progress</option>
+                        <option value="Resolved">Resolved</option>
+
+                    </select>
+
+
+
+                    <button type="submit" style="border-radius: 10px; color: whitesmoke;background: green; " name="updatebutton" value="{{ image_post.latitude }}">Update Status</button>
+                    <!-- <button type="submit" style="border-radius: 10px; color: whitesmoke;background: green; float: right;" name="predictionbutton" value="{{ y }}">Get Prediction</button>
+                    <button type="submit" style="border-radius: 10px; color: whitesmoke;background: green; float: right;" name="Tomorrow_Pred" value="{{ y }}">Get Predicted Numbers</button> -->
+
+
+                </div>
+            </article>
+        </form>
+        {% endfor %}
+
+        <div id="map" style="width: 45%;height: 500px; position: fixed;">
+
+        </div>
+             <script>
+                    // Initialize and add the map
+
+                    function initMap() {
+
+                        var mumbai = {lat: 19.0760, lng: 72.8777};
+                        // The map, centered at Uluru
+                        var map = new google.maps.Map(
+                            document.getElementById('map'), {zoom: 2, center: mumbai});
+                        var latitude = [];
+                        var longitude = [];
+
+                        {% for post in accel_posts %}
+                            latitude.push({{ post.latitude }})
+                            longitude.push({{ post.longitude }})
+                        {% endfor %}
+                        console.log(latitude);
+                        // The marker, positioned at Uluru
+                        for (var i = 0; i < latitude.length; i++) {
+
+                            var marker = new google.maps.Marker({
+                                position: {lat: latitude[i], lng: longitude[i]},
+                                map: map
+                            });
+                            console.log("HELLO")
+                        }
+                    }
+                </script>
+
+            <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgkwQaRBEIIq-NZrOWaJV2HURffUcFEhs&callback=initMap">
+            </script>
+
+
+        </div>
+
+{% endblock content %}
